@@ -31,6 +31,30 @@ Not run: **hook-04** (needs live Instagram research, which the prompt says never
 Instagram account does not exist yet, T-024). **page-02** is the post-sign-up email, so it does not
 apply until Kit exists (`runs\<slug>\emails.json` already holds the drafts).
 
+## Showcase pass (2026-10-21, second build)
+
+Thomas: "Digital products site is MUUUUCH better, but i still think it could be a better showcase".
+Built with the `impeccable` skill (critique, then bolder/polish/animate) on the same SOP structure.
+
+- **Hero product scene**: `_src\mockups.py` draws a clipboard, a plain tablet and a pen in code and lays
+  the real PDF page renders on them (`img\scene-*.webp`, transparent, 640w + full). Caption under it:
+  "Real pages from the PDF. Clipboard, tablet and pen not included."
+- **Exit-free header** on the three sales pages: only on-page links (See inside, What you get, Questions).
+  The other kits stay at the bottom. Guide and About keep the full nav.
+- **"One page, one job" motion** (plays once on scroll, off for reduced motion): Focus = a week of pages
+  dropping in with Wednesday skipped and Thursday still clean, against a planner whose catch-up count
+  ticks up; Task = micro-steps ticking off beside a 5-minute timer (labelled "Timer sped up");
+  Time = the +50% column counting 10 → 15 min.
+- **Flipbook** "Flip through every page": swipe, arrows, keyboard, page count, sheets slide off the stack.
+  A buy button sits right under it.
+- **Price anchor with real prices only**: Focus page compares the three planners in "I tried some ADHD
+  planners" (The Long Climb, Nov 2023: $35, $18.99, $7.99, with her quoted snag, linked) to $7 / about
+  64¢ a page. Kit pages show the real range: three kits, $7 each, $21 for all three, no bundle discount.
+- **Offer stack** with page thumbnails and descriptions, spec chips, and a 3-step "What happens when you
+  click" (pay on Whop, files open, print today's page).
+- **Share cards**: `img\og-*.jpg` now carry the hook, the price and the product scene, one per page
+  (guide and about get their own).
+
 ## Honesty rules used
 - Every quote on a sales page is a row in the Money Engine `evidence` table (OPP-0043/44/45), quoted
   word for word with a link. They are labelled as reviews of *other* products, not ours.
@@ -46,7 +70,7 @@ apply until Kit exists (`runs\<slug>\emails.json` already holds the drafts).
 
 ## Rebuild
 ```powershell
-cd D:\Claude\steady-focus-site; python _src\assets.py; python _src\build.py; python _src\shots.py
+cd D:\Claude\steady-focus-site; python _src\assets.py; python _src\mockups.py; python _src\build.py; python _src\shots.py
 ```
 
 ## Publishing (needs Thomas's yes)

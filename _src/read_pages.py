@@ -48,4 +48,4 @@ def build(read_page, P, KITS, BASE):
     a = a.replace('<p class="crumbs"><a href="index.html">Home</a> / About</p>', '<p class="crumbs"><a href="index.html">Home</a> / About</p>')
     read_page("about.html", "About Steady Focus Co.: Small Printable Planning Tools",
               "Steady Focus Co. makes small printable pages for planning, starting tasks and keeping track of time. What we make, how we chose it, and what we don't do.",
-              "about", a, [{"@context": "https://schema.org", "@type": "AboutPage", "name": "About Steady Focus Co.", "url": BASE + "about.html"}], og_type="website")
+              "about", a, [{"@context": "https://schema.org", "@type": "AboutPage", "name": "About Steady Focus Co.", "url": BASE + "about.html"}], og="og-about.jpg", og_type="website")

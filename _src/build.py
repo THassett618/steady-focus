@@ -24,6 +24,9 @@ LOCK = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="1
 DOWN = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 CYCLE = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12a8 8 0 11-2.3-5.6M20 4v4.5h-4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 QUOTE = '<svg viewBox="0 0 30 24" aria-hidden="true"><path fill="currentColor" d="M0 24V14C0 6 4.6 1.4 12 0l1.4 3.6C9 5 7 8 7 12h5v12H0zm17 0V14c0-8 4.6-12.6 12-14l1 3.6C26 5 24 8 24 12h5v12H17z"/></svg>'
+PRINT = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 9V3h10v6M7 17H5a2 2 0 01-2-2v-4a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2h-2M7 14h10v7H7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>'
+CHEV_L = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+CHEV_R = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 PLUS = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>'
 
 e = html.escape
@@ -39,7 +42,7 @@ PRODUCTS["focus"] = dict(
     h1='Your planner isn\'t the problem. <span class="mark">Its size is.</span>',
     sub="The ADHD Focus Bundle is 11 small printable pages. Each one does one job and stands on its own, so a missed day leaves nothing to catch up on.",
     btn="Get the 11 pages",
-    fan=["focus-daily-focus-planner", "focus-dopamine-menu", "focus-weekly-habit-tracker"],
+    fan=["focus-daily-focus-planner", "focus-dopamine-menu", "focus-weekly-habit-tracker"], scene="focus",
     problem_h="Why planners end up in a drawer",
     problem_lede="We read what people wrote about planners they had paid for. The same complaint kept coming up, and it was never about willpower. It was upkeep.",
     quotes=[
@@ -54,9 +57,14 @@ PRODUCTS["focus"] = dict(
     ],
     vs_h="One big planner, or eleven loose pages",
     vs_old=("One big planner", "Every page leans on the one before it. Miss Tuesday and Wednesday already starts behind. The thicker it gets, the louder the guilt.",
-            '<div class="book" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b>Week 3, Tuesday<em>3 days to catch up</em></b></div>'),
+            '<div class="book" data-anim aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><b>Week 3, Tuesday<em><span data-count="3">3</span> days to catch up</em></b></div>'),
     vs_new=("Eleven loose pages", "Nothing is linked to anything else. Skip a day and nothing waits for you. Print the page you need today and ignore the rest.",
-            '<div class="loose" aria-hidden="true"><img src="img/focus-meal-planner-sm.webp" alt="" width="420" height="543" loading="lazy"><img src="img/focus-daily-focus-planner-sm.webp" alt="" width="420" height="543" loading="lazy"><img src="img/focus-grocery-list-sm.webp" alt="" width="420" height="543" loading="lazy"></div>'),
+            '<div class="week" data-anim aria-hidden="true">'
+            + "".join(f'<div class="day{" skip" if pg is None else ""}" style="--i:{i}"><span>{d}</span>'
+                      + ('<em>Skipped</em>' if pg is None else f'<img src="img/{pg}-sm.webp" alt="" width="420" height="543" loading="lazy">') + '</div>'
+                      for i, (d, pg) in enumerate([("Mon", "focus-daily-focus-planner"), ("Tue", "focus-meal-planner"), ("Wed", None),
+                                                   ("Thu", "focus-daily-focus-planner"), ("Fri", "focus-grocery-list"), ("Sat", "focus-micro-chore-checklist"), ("Sun", "focus-evening-wind-down")]))
+            + '</div><p class="week-note">Wednesday got skipped. Thursday still starts clean.</p>'),
     pages=[
         ("focus-daily-focus-planner", "Daily Focus Planner", "Three priorities (only three), time blocks from 07:00 to 18:00 and a brain-dump box."),
         ("focus-dopamine-menu", "Dopamine Menu", "When you're stuck, pick ONE thing off the list: a 2-minute tidy, a glass of water, one song."),
@@ -102,7 +110,7 @@ PRODUCTS["task"] = dict(
     h1='Your to-do list isn\'t missing tasks. <span class="mark">It\'s missing the first move.</span>',
     sub="Four printable pages that only ask two things: what is the first thing your hands do, and can you give it five minutes?",
     btn="Get the 4 pages",
-    fan=["task-micro-step-breakdown", "task-five-minute-start-timer", "task-one-task-at-a-time"],
+    fan=["task-micro-step-breakdown", "task-five-minute-start-timer", "task-one-task-at-a-time"], scene="task",
     problem_h="The task is on the list. You still haven't started.",
     problem_lede="People who use to-do apps describe the same wall. The list holds the goal. Nothing on it tells you how to begin.",
     quotes=[
@@ -117,7 +125,9 @@ PRODUCTS["task"] = dict(
     vs_old=("Your to-do list says", "A goal. Your brain looks at it, finds nothing to grab, and the task waits another hour.",
             '<ul class="listcard" aria-hidden="true"><li><span class="box"></span><span class="stuck">Clean the kitchen</span></li><li><span class="box"></span>Start the report</li><li><span class="box"></span>Sort the post</li></ul>'),
     vs_new=("The Micro-Step page says", "The first three things your hands do, and five minutes on the clock. When the timer ends you're allowed to stop.",
-            '<ul class="listcard" aria-hidden="true"><li><span class="box"></span><span><span class="stuck">Pick up the first cup</span></span></li><li><span class="box"></span>Run the hot tap</li><li><span class="box"></span>Wipe one counter <span class="hint">· 5 min, then stop if you want</span></li></ul><p class="example">Example filled in by us.</p>'),
+            '<div class="startdemo" data-anim aria-hidden="true"><ul class="listcard ticks"><li style="--i:0"><span class="box"></span><span class="stuck">Pick up the first cup</span></li><li style="--i:1"><span class="box"></span>Run the hot tap</li><li style="--i:2"><span class="box"></span>Wipe one counter</li></ul>'
+            '<div class="timer"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52"/><circle class="run" cx="60" cy="60" r="52"/></svg><b data-clock="300">5:00</b><small>then stop if you want</small></div></div>'
+            '<p class="example">Example filled in by us. Timer sped up.</p>'),
     pages=[
         ("task-micro-step-breakdown", "Micro-Step Breakdown", "The task you're avoiding, then its first 3 physical actions. Actions, not goals."),
         ("task-five-minute-start-timer", "5-Minute Start Timer", "One small action for five minutes. When it ends: stop, or go again. Both count."),
@@ -156,7 +166,7 @@ PRODUCTS["time"] = dict(
     h1='Your planner assumes you can feel time passing. <span class="mark">This one doesn\'t.</span>',
     sub="Four printable pages where every time block already has 50% added, and the alarm is set for when to stop, not just when to start.",
     btn="Get the 4 pages",
-    fan=["time-time-block-card", "time-stop-alarm-checklist", "time-time-cost-estimator"],
+    fan=["time-time-block-card", "time-stop-alarm-checklist", "time-time-cost-estimator"], scene="time",
     problem_h="\u201cTen minutes,\u201d and then it's forty",
     problem_lede="People who use planning apps say the same thing. The schedule looks right. The times in it are wrong.",
     quotes=[
@@ -171,7 +181,7 @@ PRODUCTS["time"] = dict(
     vs_old=("A blank schedule grid", "It writes down your guess and calls it a plan. If the guess is short, the whole day runs late.",
             '<table class="minitable" aria-hidden="true"><tr><th>Time</th><th>Task</th></tr><tr><td>8:00</td><td>Shower</td></tr><tr><td>8:10</td><td>Breakfast</td></tr><tr><td>8:20</td><td>Leave</td></tr></table>'),
     vs_new=("The Time-Block Day Card", "Your guess, then the block you actually give it with 50% added, then what it really took. Next time, your guess is closer.",
-            '<table class="minitable" aria-hidden="true"><tr><th>Task</th><th>I think</th><th>+50% block</th><th>Took</th></tr><tr><td>Shower</td><td>10 min</td><td class="plus">15 min</td><td>__</td></tr><tr><td>Breakfast</td><td>10 min</td><td class="plus">15 min</td><td>__</td></tr></table><p class="example">Example filled in by us.</p>'),
+            '<table class="minitable" data-anim aria-hidden="true"><tr><th>Task</th><th>I think</th><th>+50% block</th><th>Took</th></tr><tr><td>Shower</td><td>10 min</td><td class="plus"><span data-count-from="10" data-count="15">15</span> min</td><td>__</td></tr><tr><td>Breakfast</td><td>10 min</td><td class="plus"><span data-count-from="10" data-count="15">15</span> min</td><td>__</td></tr></table><p class="example">Example filled in by us.</p>'),
     pages=[
         ("time-time-block-card", "Time-Block Day Card", "Task, your guess, the block with 50% added, and what it actually took."),
         ("time-stop-alarm-checklist", "Stop-Alarm Checklist", "The 3 things you do the moment the alarm rings, plus a backup alarm time."),
@@ -229,17 +239,24 @@ def head(title, desc, url, og, depth, extra_ld, og_type="product"):
 <meta property="og:url" content="{url}">
 <meta property="og:image" content="{BASE}img/{og}">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{e(title)}">
+<meta name="twitter:image" content="{BASE}img/{og}">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="{r}favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{r}img/apple-touch-icon.png">
-{FONTS}
+<link rel="preload" href="{r}fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="{r}fonts/atkinson-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{r}style.css">
 <script type="application/ld+json">{json.dumps(extra_ld, ensure_ascii=False)}</script>
 </head>'''
 
 
-def topbar(depth, current=None, badge=None):
+def topbar(depth, current=None, badge=None, onpage=False):
     r = rel(depth)
+    if onpage:
+        # Sales pages stay exit-free: the header only jumps within the page. Other kits live at the bottom.
+        links = '<a href="#inside">See inside</a><a href="#get">What you get</a><a href="#faq">Questions</a>'
+        return (f'<header class="top"><div class="wrap"><a class="logo" href="{r}index.html">{LOGO}Steady Focus Co.</a>'
+                f'<nav aria-label="On this page">{links}</nav><span class="badge">{badge}</span></div></header>')
     nav = [("Focus Bundle", f"{r}index.html", "focus"), ("Task Kit", f"{r}products/adhd-task-initiation-starter-kit.html", "task"),
            ("Time Kit", f"{r}products/adhd-time-blindness-toolkit.html", "time"), ("Guide", f"{r}guides/adhd-planner-and-focus-tools-compared.html", "guide")]
     links = "".join(f'<a href="{h}"{" aria-current=\"page\"" if k == current else ""}>{t}</a>' for t, h, k in nav)
@@ -281,12 +298,18 @@ def product_page(key):
     ]
     if key == "focus":
         ld.insert(0, {"@context": "https://schema.org", "@type": "Organization", "name": "Steady Focus Co.", "url": BASE, "logo": BASE + "img/apple-touch-icon.png"})
+    names = dict((a, b) for a, b, _ in p["pages"])
     f1, f2, f3 = p["fan"]
-    fan = (f'<div class="fan" id="fan">'
-           f'<img class="p1" src="{r}img/{f2}.webp" alt="" width="960" height="1242" fetchpriority="high">'
-           f'<img class="p3" src="{r}img/{f3}.webp" alt="" width="960" height="1242" fetchpriority="high">'
-           f'<img class="p2" src="{r}img/{f1}.webp" alt="The {e(p["pages"][0][1])} page from the {e(p["name"])}" width="960" height="1242" fetchpriority="high">'
-           f'<div class="sticker" aria-hidden="true"><b>{p["count"]}</b><span>pages · PDF</span></div></div>')
+    sc = p["scene"]
+    from PIL import Image as _I
+    sw, sh = _I.open(ROOT / f"img/scene-{sc}.webp").size
+    ssw, ssh = _I.open(ROOT / f"img/scene-{sc}-sm.webp").size
+    fan = (f'<figure class="scene" id="fan">'
+           f'<img src="{r}img/scene-{sc}.webp" srcset="{r}img/scene-{sc}-sm.webp 640w, {r}img/scene-{sc}.webp {sw}w" '
+           f'sizes="(max-width: 900px) 100vw, 640px" width="{sw}" height="{sh}" fetchpriority="high" decoding="async" '
+           f'alt="The real {e(names[f1])} page on a clipboard, the {e(names[f2])} page on a tablet and a printed {e(names[f3])} page">'
+           f'<div class="sticker" aria-hidden="true"><b>{p["count"]}</b><span>pages · PDF</span></div>'
+           f'<figcaption>Real pages from the PDF. Clipboard, tablet and pen not included.</figcaption></figure>')
 
     quotes = "".join(
         f'<figure class="q{" wide" if wide else ""}">{QUOTE}<blockquote>{e(t)}</blockquote>'
@@ -299,9 +322,38 @@ def product_page(key):
         for i, (img, t, c) in enumerate(p["pages"]))
     first = p["pages"][0]
 
-    stack_items = "".join(f"<li>{CHECK}<span><strong>{e(t)}</strong></span></li>" for _, t, _ in p["pages"]) + \
-        "".join(f"<li>{CHECK}<span>{e(x)}</span></li>" for x in p["stack_extra"])
-    prev = "".join(f'<img src="{r}img/{x}-sm.webp" alt="{e(dict((a, b) for a, b, _ in p["pages"])[x])} page" width="420" height="543" loading="lazy">' for x in p["stack_preview"])
+    stack_items = "".join(f'<li class="pg"><img src="{r}img/{img}-sm.webp" alt="" width="420" height="543" loading="lazy"><span><strong>{e(t)}</strong><small>{e(c)}</small></span></li>' for img, t, c in p["pages"])
+    stack_extra = "".join(f"<li>{CHECK}<span>{e(x)}</span></li>" for x in p["stack_extra"])
+    spec = "".join(f"<li>{x}</li>" for x in ["PDF", f'{p["count"]} pages', "US Letter, prints on A4", "Black &amp; white friendly", "One file + single pages"])
+    steps = (f'<ol class="steps">'
+             f'<li><span class="n">{LOCK}</span><b>Pay $7 on Whop</b><span>One payment on Whop’s secure checkout. No account with us.</span></li>'
+             f'<li><span class="n">{DOWN}</span><b>Your files open</b><span>Straight after paying, Whop takes you to the download folder.</span></li>'
+             f'<li><span class="n">{PRINT}</span><b>Print today’s page</b><span>Just the one you need. The rest can wait in the folder.</span></li></ol>')
+    n_pages = int(p["count"])
+    if key == "focus":
+        rows = [("The ADHD Planner", "“pages and pages of work ahead”", 35.00),
+                ("Legend 6 Month Daily Planner", "people “might abandon before finishing the setup”", 18.99),
+                ("Weekly Undated Planner Book", "the weekend “smooshed into one small section”", 7.99)]
+        bars = "".join(f'<li style="--w:{v / 35 * 100:.1f}%"><div class="who"><b>{e(n)}</b><span>{q}</span></div><div class="bar-t"><i></i><em>${v:.2f}</em></div></li>' for n, q, v in rows)
+        bars += f'<li class="ours" style="--w:{7 / 35 * 100:.1f}%"><div class="who"><b>ADHD Focus Bundle</b><span>11 one-job pages. Print only the one you need.</span></div><div class="bar-t"><i></i><em>$7</em></div></li>'
+        value = f'''<section id="value"><div class="wrap">
+  <h2>What three ADHD planners cost, next to this</h2>
+  <p class="lede">One ADHD writer bought three planners and wrote up how each went. Here are the prices she paid and the snag she hit, next to ours.</p>
+  <ol class="prices" data-anim>{bars}</ol>
+  <p class="fine">Prices and quotes from “I tried some ADHD planners”, The Long Climb, November 2023 (<a href="https://thelongclimb.substack.com/p/i-tried-some-adhd-planners" rel="noopener nofollow">source</a>). Those were her prices then; they may have changed. $7 for 11 pages works out at about 64¢ a page.</p>
+</div></section>'''
+    else:
+        def rng(k):
+            q = PRODUCTS[k]
+            cur = ' class="cur"' if k == key else ""
+            here = '<span class="here">This page</span>' if k == key else f'<a href="{r}{q["file"]}">See it</a>'
+            return f'<tr{cur}><th scope="row">{e(q["name"])}</th><td>{q["count"]} pages</td><td>{e(KIT_BLURB[k][1])}</td><td class="pr">$7</td><td>{here}</td></tr>'
+        value = f'''<section id="value"><div class="wrap">
+  <h2>Three small kits, all </h2>
+  <p class="lede">Every Steady Focus Co. kit is $7. Buy the one for where you get stuck. They don’t depend on each other.</p>
+  <div class="tablewrap range"><table><thead><tr><th>Kit</th><th>Pages</th><th>For when</th><th>Price</th><th></th></tr></thead><tbody>{"".join(rng(k) for k in ("focus", "task", "time"))}</tbody></table></div>
+  <p class="fine">Each kit is its own $7 checkout. All three come to $21, bought one at a time. There is no bundle discount.</p>
+</div></section>'''
 
     yes = "".join(f"<li>{CHECK}<span>{e(x)}</span></li>" for x in p["yes"])
     no = "".join(f"<li>{CROSS}<span>{e(x)}</span></li>" for x in p["no"])
@@ -319,7 +371,7 @@ def product_page(key):
 
     body = f'''<body>
 <!-- Built from the Digital Product SOP: lander template assets/NoPopLander.html (structure) + prompts/page-01 (stack box, desktop side panel, mobile sticky bar). Copy: _sop/*.md (hook-01, hook-02, hook-03). -->
-{topbar(depth, key, "Instant PDF")}
+{topbar(depth, key, "Instant PDF", onpage=True)}
 <main>
 <section class="hero" style="padding:0"><div class="wrap">
   <div class="hero-copy">
@@ -350,29 +402,45 @@ def product_page(key):
   </div>
 </div></section>
 
-<section id="inside"><div class="wrap">
-  <h2>Every page, up close</h2>
-  <p class="lede">These are the real pages you download. Tap one to see it full size.</p>
+<section id="inside" class="inside"><div class="wrap">
+  <h2>Flip through every page</h2>
+  <p class="lede">These are the real pages you download, not mock-ups. Swipe, use the arrows, or pick one from the list.</p>
   <div class="viewer">
     <div class="tabs" role="tablist" aria-label="Pages in the {e(p["name"])}">{tabs}</div>
-    <figure class="stage" id="stage" role="tabpanel" aria-live="polite">
-      <img id="stage-img" src="{r}img/{first[0]}.webp" alt="{e(first[1])} page" width="960" height="1242" loading="lazy">
-      <figcaption id="stage-cap">{e(first[2])}</figcaption>
-    </figure>
+    <div class="flip">
+      <figure class="stage" id="stage" role="tabpanel">
+        <div class="sheets" id="sheets"><img id="stage-img" src="{r}img/{first[0]}.webp" alt="{e(first[1])} page" width="960" height="1242" loading="lazy" decoding="async"></div>
+        <div class="flipnav">
+          <button type="button" class="fbtn" id="prev" aria-label="Previous page">{CHEV_L}</button>
+          <span class="count" aria-live="polite"><b id="pg-n">1</b> / {len(p["pages"])}</span>
+          <button type="button" class="fbtn" id="next" aria-label="Next page">{CHEV_R}</button>
+        </div>
+        <figcaption><strong id="stage-title">{e(first[1])}</strong><span id="stage-cap">{e(first[2])}</span></figcaption>
+      </figure>
+      <div class="flip-cta">{buy_button(p, "Get all " + p["count"] + " pages")}<span>Instant PDF · $7 once</span></div>
+    </div>
   </div>
 </div></section>
 
-<section class="sand"><div class="wrap stack-wrap">
+{value}
+
+<section class="sand" id="get"><div class="wrap">
   <div class="stack">
-    <h3>Everything in the {e(p["name"])}</h3>
-    <ul class="checks">{stack_items}</ul>
-    <div class="total">
-      <div class="price"><small>$</small>7<span class="price-note">one time · instant download</span></div>
-      {buy_button(p)}
+    <div class="stack-head"><h2>Everything in the {e(p["name"])}</h2><ul class="spec">{spec}</ul></div>
+    <div class="stack-body">
+      <ol class="pages">{stack_items}</ol>
+      <div class="stack-side">
+        <ul class="checks">{stack_extra}</ul>
+        <div class="total">
+          <div class="price"><small>$</small>7<span class="price-note">one time · instant download</span></div>
+          {buy_button(p)}
+        </div>
+        {secure()}
+      </div>
     </div>
-    {secure()}
   </div>
-  <div class="preview-grid" aria-label="Page previews">{prev}</div>
+  <h3 class="steps-h">What happens when you click</h3>
+  {steps}
 </div></section>
 
 <section><div class="wrap">
@@ -383,7 +451,7 @@ def product_page(key):
   </div>
 </div></section>
 
-<section class="sand"><div class="wrap faq">
+<section class="sand" id="faq"><div class="wrap faq">
   <h2>Questions</h2>
   {faq}
 </div></section>
@@ -395,6 +463,7 @@ def product_page(key):
 </div></section>
 
 <section class="close"><div class="wrap">
+  <img class="close-scene" src="{r}img/scene-{sc}-sm.webp" alt="" width="{ssw}" height="{ssh}" loading="lazy" decoding="async">
   <h2>{p["h1"].replace('<span class="mark">', '').replace('</span>', '')}</h2>
   <p>{e(p["sub"])}</p>
   {buy_button(p)}
@@ -402,22 +471,54 @@ def product_page(key):
 </div></section>
 </main>
 
-<div class="bar" id="bar" aria-hidden="true"><div class="t"><b>{e(p["short"])}</b>$7 · instant PDF</div>{buy_button(p, "Get it")}</div>
+<div class="bar" id="bar" aria-hidden="true"><div class="t"><b>{e({"focus": "Focus Bundle", "task": "Task Kit", "time": "Time Kit"}[key])}</b>{p["count"]} pages · instant PDF</div>{buy_button(p, "Get it")}</div>
 {footer(depth)}
 <script>
 (function(){{
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fan=document.getElementById('fan'); if(fan) fan.classList.add('ready');
-  var img=document.getElementById('stage-img'), cap=document.getElementById('stage-cap');
-  var tabs=[].slice.call(document.querySelectorAll('.tab'));
-  function pick(t){{
-    tabs.forEach(function(x){{x.setAttribute('aria-selected', x===t?'true':'false');}});
-    img.classList.add('swap');
-    var n=new Image(); n.onload=function(){{img.src=t.dataset.src; img.alt=t.dataset.alt; cap.textContent=t.dataset.cap; requestAnimationFrame(function(){{img.classList.remove('swap');}});}}; n.src=t.dataset.src;
+  /* flipbook */
+  var sheets=document.getElementById('sheets'), img=document.getElementById('stage-img'), cap=document.getElementById('stage-cap'), ttl=document.getElementById('stage-title'), num=document.getElementById('pg-n');
+  var tabs=[].slice.call(document.querySelectorAll('.tab')), tl=document.querySelector('.tabs'), cur=0, busy=false;
+  function warm(i){{var t=tabs[(i+tabs.length)%tabs.length]; if(t&&!t._w){{t._w=1; var n=new Image(); n.src=t.dataset.src;}}}}
+  function go(j,dir){{
+    j=(j+tabs.length)%tabs.length; if(j===cur||busy) return; var t=tabs[j];
+    if(dir===undefined) dir=j>cur?1:-1;
+    tabs.forEach(function(x,k){{x.setAttribute('aria-selected',k===j?'true':'false'); x.tabIndex=k===j?0:-1;}});
+    if(tl&&tl.scrollWidth>tl.clientWidth+4) tl.scrollTo({{left:t.offsetLeft-tl.clientWidth/2+t.clientWidth/2,behavior:reduce?'auto':'smooth'}});
+    cur=j; num.textContent=j+1; ttl.textContent=t.dataset.alt.replace(/ page$/,''); cap.textContent=t.dataset.cap;
+    var n=new Image(); n.onload=function(){{
+      if(!reduce){{var old=img.cloneNode(); old.removeAttribute('id'); old.className='leaving '+(dir>0?'to-l':'to-r'); sheets.appendChild(old); busy=true; setTimeout(function(){{old.remove(); busy=false;}},480);}}
+      img.src=t.dataset.src; img.alt=t.dataset.alt;
+      if(!reduce){{img.classList.remove('arrive'); void img.offsetWidth; img.classList.add('arrive');}}
+      warm(j+1); warm(j-1);
+    }}; n.src=t.dataset.src;
   }}
   tabs.forEach(function(t,i){{
-    t.addEventListener('click',function(){{pick(t);}});
-    t.addEventListener('keydown',function(ev){{var k=ev.key, j=-1; if(k==='ArrowDown'||k==='ArrowRight') j=(i+1)%tabs.length; if(k==='ArrowUp'||k==='ArrowLeft') j=(i-1+tabs.length)%tabs.length; if(j>-1){{ev.preventDefault(); tabs[j].focus(); pick(tabs[j]);}}}});
+    t.tabIndex=i===0?0:-1;
+    t.addEventListener('click',function(){{go(i);}});
+    t.addEventListener('keydown',function(ev){{var k=ev.key, j=-1; if(k==='ArrowDown'||k==='ArrowRight') j=i+1; if(k==='ArrowUp'||k==='ArrowLeft') j=i-1; if(j>-1){{ev.preventDefault(); j=(j+tabs.length)%tabs.length; tabs[j].focus(); go(j, k==='ArrowDown'||k==='ArrowRight'?1:-1);}}}});
   }});
+  document.getElementById('prev').addEventListener('click',function(){{go(cur-1,-1);}});
+  document.getElementById('next').addEventListener('click',function(){{go(cur+1,1);}});
+  sheets.addEventListener('mouseenter',function(){{warm(cur+1);}});
+  window.addEventListener('load',function(){{setTimeout(function(){{warm(1); warm(-1);}},1200);}});
+  var x0=null; sheets.addEventListener('pointerdown',function(ev){{x0=ev.clientX;}});
+  sheets.addEventListener('pointerup',function(ev){{if(x0===null) return; var dx=ev.clientX-x0; x0=null; if(Math.abs(dx)>40) go(cur+(dx<0?1:-1), dx<0?1:-1);}});
+  sheets.addEventListener('pointercancel',function(){{x0=null;}});
+  /* scroll-in demos: one page, one job */
+  function fmt(s){{return Math.floor(s/60)+':'+('0'+s%60).slice(-2);}}
+  function play(el){{
+    el.classList.add('in');
+    [].forEach.call(el.querySelectorAll('[data-count]'),function(c){{var to=+c.dataset.count, fr=+(c.dataset.countFrom||0); if(reduce){{c.textContent=to;return;}} var t0=null; c.textContent=fr; function step(ts){{if(!t0)t0=ts; var k=Math.min(1,(ts-t0-600)/1100); if(k>0) c.textContent=Math.round(fr+(to-fr)*(1-Math.pow(1-k,3))); if(k<1) requestAnimationFrame(step);}} requestAnimationFrame(step);}});
+    [].forEach.call(el.querySelectorAll('[data-clock]'),function(c){{var tot=+c.dataset.clock; if(reduce){{return;}} var t0=null; function step(ts){{if(!t0)t0=ts; var k=Math.min(1,(ts-t0-900)/3600); if(k>0) c.textContent=fmt(Math.round(tot*(1-k))); if(k<1) requestAnimationFrame(step);}} requestAnimationFrame(step);}});
+  }}
+  var anims=[].slice.call(document.querySelectorAll('[data-anim]'));
+  if('IntersectionObserver' in window && !reduce){{
+    var io=new IntersectionObserver(function(es){{es.forEach(function(en){{if(en.isIntersecting){{play(en.target); io.unobserve(en.target);}}}});}},{{threshold:.2}});
+    anims.forEach(function(a){{a.classList.add('pre-anim'); io.observe(a);}});
+  }}
+  /* sticky mobile bar */
   var bar=document.getElementById('bar'), buy=document.getElementById('buy');
   if(bar && buy && 'IntersectionObserver' in window){{
     var seen=false;
@@ -434,7 +535,7 @@ def product_page(key):
     print("wrote", out)
 
 
-def read_page(file, title, desc, current, main_html, ld, og="og-focus-bundle.jpg", og_type="article"):
+def read_page(file, title, desc, current, main_html, ld, og="og-guide.jpg", og_type="article"):
     depth = file.count("/")
     url = BASE + file
     body = f'''<body>
